@@ -6,6 +6,19 @@
   <router-view/>
 </template>
 
+<script lang="ts" setup>
+import { onMounted } from 'vue'
+import { useStore } from "vuex"
+import { actionNames } from "@/store";
+
+const store = useStore()
+
+onMounted(() => {
+  store.dispatch(actionNames.FETCH_FLOORS)
+})
+
+</script>
+
 <style lang="scss">
 #app {
   -webkit-font-smoothing: antialiased;
