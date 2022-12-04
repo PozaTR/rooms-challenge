@@ -1,5 +1,7 @@
-import { createStore } from 'vuex'
-import floorService from '@/api/floorService'
+import { createStore } from "vuex"
+import floorService from "@/api/floorService"
+import State from "@/types/State"
+import Floor from "@/types/Floor"
 
 export const actionNames = {
   FETCH_FLOORS: 'fetch_floor',
@@ -26,13 +28,24 @@ export default createStore({
     rooms: []
   },
   actions: {
-    [actionNames.FETCH_FLOORS]: async () => {
+    [actionNames.FETCH_FLOORS]: async ({ commit })  => {
       const floors = await floorService.getFloors()
-      console.log('floors', floors)
-      return floors
+      floors.forEach((floor: Floor )=> {
+        commit(mutationNames.SET_FLOOR, floor)
+      })
+    },
+    [actionNames.FETCH_FLOOR_INFO]: async ({ commit }, floorId: number) => {
+      const floor = await floorService.getFloorInfo(floorId)
+      console.log('selected floor----->>>>>', floor)
     }
   },
   mutations: {
+    [mutationNames.SET_FLOOR]: (state: State, floor:  Floor) => {
+      state.floors.push(floor)
+    }
+  },
+  getters: {
+    [getterNames.GET_FLOORS]: (state: State): Array<Floor> => state.floors
   },
   modules: {
   }
