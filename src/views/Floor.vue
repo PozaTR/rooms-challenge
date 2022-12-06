@@ -12,7 +12,8 @@
       v-for="(room, idx) in floorInfo.rooms"
       :key="`room--${idx}`">
       <Room
-        :room="room">
+        :room="room"
+        @updateRoom="updateRoom">
       </Room>
     </li>
   </ol>
@@ -20,16 +21,21 @@
 </template>
 
 <script lang="ts" setup>
-import Room from '@/components/room'
 import {computed, onMounted} from "vue"
-import {actionNames, getterNames} from "@/store"
 import { useStore } from "vuex"
 import { useRouter } from "vue-router"
+import Room from '@/components/room'
+import { actionNames, getterNames } from "@/store"
+
 
 const store = useStore()
 const router = useRouter()
 
 const floorInfo = computed(() => store.getters[getterNames.GET_FLOOR_INFO](parseInt(router.currentRoute.value.params.id as string)))
+
+async function updateRoom(roomInfo: Room) {
+  await store.dispatch(actionNames.PATCH_ROOM, roomInfo)
+}
 
 onMounted(async () => {
   await store.dispatch(actionNames.FETCH_FLOOR_INFO, parseInt(router.currentRoute.value.params.id as string))
