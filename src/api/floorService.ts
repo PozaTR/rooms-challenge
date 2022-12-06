@@ -10,7 +10,8 @@ const getFloors = async (): Promise<Array<Floor>>  => {
 }
 
 const getFloorInfo = async (floorId: number): Promise<FloorUI> => {
-    return await axios.get(`${BASE_URL}floors/${floorId}`)
+    const { data } = await axios.get(`${BASE_URL}floors/${floorId}`)
+    return data
 }
 
 export default {
