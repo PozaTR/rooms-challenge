@@ -1,7 +1,21 @@
 .button {
-  background-color: $color-primary;
   border-radius: 12px;
   color: white;
+  cursor: pointer;
   font-size: $font-size-s;
   padding: ($gap-s + 2) $gap-l;
+}
+
+.button-primary {
+  background-color: $color-primary;
+}
+
+.button-secondary {
+  background-color: $color-danger;
+}
+
+.button--disabled {
+  background-color: $color-secondary;
+  color: $color-primary;
+  cursor: not-allowed;
 }

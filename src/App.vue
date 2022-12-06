@@ -27,27 +27,34 @@ const floors = computed(() => store.getters[getterNames.GET_FLOORS])
 
 const router = useRouter()
 
-let isRequesting = false
+const isRequesting = ref(false)
 
 async function changeFloor(floorId: number) {
   activeFloorId.value = floorId
- if (!isRequesting) {
+ if (!isRequesting.value) {
    try {
-     isRequesting = true
+     isRequesting.value = true
      await store.dispatch(actionNames.FETCH_FLOOR_INFO, floorId)
-     await router.push(`/floor/${floorId}`)
+
+     await router.push({
+       name: 'FloorView',
+       params: {
+         id: floorId
+       }
+     })
    } catch (error) {
      console.log(error)
    } finally {
-     isRequesting = false
+     isRequesting.value = false
    }
  }
 }
 
 onMounted(async () => {
   await store.dispatch(actionNames.FETCH_FLOORS)
-  activeFloorId.value = parseInt(router.currentRoute.value.params.id) || floors.value[0].id
-  router.replace({
+  activeFloorId.value = parseInt(router.currentRoute.value.params.id as string) || floors.value[0].id
+
+  await router.replace({
     name: 'FloorView',
     params: {
       id: activeFloorId.value
