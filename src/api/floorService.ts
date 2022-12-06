@@ -23,8 +23,14 @@ const updateRoom = async (newRoom: Room) => {
     await axios.patch(`${BASE_URL}rooms/${newRoom.id}`, payload)
 }
 
+const createNewRoom = async (payload: { floorId: number, newRoom: Room }): Promise<number> => {
+    const { data } = await axios.post(`${BASE_URL}floors/${payload.floorId}`, payload.newRoom)
+    return data.id
+}
+
 export default {
     getFloors,
     getFloorInfo,
-    updateRoom
+    updateRoom,
+    createNewRoom
 }

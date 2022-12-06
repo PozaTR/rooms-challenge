@@ -8,8 +8,8 @@ import FloorUI from "@/types/FloorUI"
 export const actionNames = {
   FETCH_FLOORS: 'fetch_floor',
   FETCH_FLOOR_INFO: 'fetch_floor_info',
-  CREATE_ROOM: 'create_room',
   PATCH_ROOM: 'patch_room',
+  CREATE_ROOM: 'create_room'
 }
 
 export const mutationNames = {
@@ -55,6 +55,14 @@ export default createStore<State>({
     [actionNames.PATCH_ROOM]: async ({ commit }, newRoom: Room) => {
       await floorService.updateRoom(newRoom)
       commit(mutationNames.UPDATE_ROOM, newRoom)
+    },
+    [actionNames.CREATE_ROOM]: async ({ commit }, payload: { floorId: number, newRoom: Room }) => {
+      const id = await floorService.createNewRoom(payload)
+      const room = {
+        ...payload.newRoom,
+        id
+      }
+      commit(mutationNames.ADD_ROOM_INTO_FLOOR, { floorId: payload.floorId, room })
     }
   },
   mutations: {
