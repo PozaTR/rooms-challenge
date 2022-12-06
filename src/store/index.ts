@@ -2,6 +2,8 @@ import { createStore } from "vuex"
 import floorService from "@/api/floorService"
 import State from "@/types/State"
 import Floor from "@/types/Floor"
+import Room from "@/types/Room";
+import FloorUI from "@/types/FloorUI";
 
 export const actionNames = {
   FETCH_FLOORS: 'fetch_floor',
@@ -18,34 +20,79 @@ export const mutationNames = {
 
 export const getterNames = {
   GET_FLOORS: 'get_floor',
-  GET_ROOM_IN_FLOOR: 'get_room_in_floor'
+  GET_FLOOR_INFO: 'get_floor_info'
 }
 
 
-export default createStore({
+export default createStore<State>({
   state: {
     floors: [],
     rooms: []
   },
   actions: {
-    [actionNames.FETCH_FLOORS]: async ({ commit })  => {
+    [actionNames.FETCH_FLOORS]: async ({ commit, state }) => {
       const floors = await floorService.getFloors()
-      floors.forEach((floor: Floor )=> {
-        commit(mutationNames.SET_FLOOR, floor)
+      floors.forEach((floor: Floor) => {
+        const floorIdx = state.floors.findIndex(_floor => _floor.id === floor.id)
+        if (floorIdx < 0) {
+          commit(mutationNames.SET_FLOOR, floor)
+        }
       })
     },
-    [actionNames.FETCH_FLOOR_INFO]: async ({ commit }, floorId: number) => {
+    [actionNames.FETCH_FLOOR_INFO]: async ({ commit, state }, floorId: number) => {
       const floor = await floorService.getFloorInfo(floorId)
-      console.log('selected floor----->>>>>', floor)
+      const floorIdx = state.floors.findIndex(floor => floor.id === floorId)
+
+      const { rooms, ..._floor } = floor
+      if (floorIdx < 0) {
+        commit(mutationNames.SET_FLOOR, _floor)
+      }
+
+      rooms.forEach(room => {
+        commit(mutationNames.ADD_ROOM_INTO_FLOOR, { floorId: floor.id, room })
+      })
     }
   },
   mutations: {
-    [mutationNames.SET_FLOOR]: (state: State, floor:  Floor) => {
+    [mutationNames.SET_FLOOR]: (state: State, floor:  Floor):void => {
       state.floors.push(floor)
+    },
+    [mutationNames.ADD_ROOM_INTO_FLOOR]: (state: State, payload: { floorId: number, room: Room }):void => {
+      const activeFloorIdx = state.floors.findIndex(floor => floor.id === payload.floorId)
+      if (state.floors[activeFloorIdx].rooms) {
+        const roomIdx = state.floors[activeFloorIdx].rooms?.findIndex(_room => _room === payload.room.id)
+        if (typeof roomIdx === 'undefined' || roomIdx < 0) {
+          state.rooms.push(payload.room)
+          state.floors[activeFloorIdx].rooms?.push(payload.room.id)
+        } else {
+          state.rooms[roomIdx] = payload.room
+        }
+      } else {
+        state.floors[activeFloorIdx].rooms = [payload.room.id]
+        state.rooms.push(payload.room)
+      }
     }
   },
   getters: {
-    [getterNames.GET_FLOORS]: (state: State): Array<Floor> => state.floors
+    [getterNames.GET_FLOORS]: (state: State): Array<Floor> => state.floors,
+    [getterNames.GET_FLOOR_INFO]: (state: State) => (activeFloorId: number): FloorUI | null => {
+      const activeFloorIdx = state.floors.findIndex(floor => floor.id === activeFloorId)
+      return activeFloorIdx >= 0
+        ? {
+            ...state.floors[activeFloorIdx],
+            rooms: state.floors[activeFloorIdx]
+                .rooms?.reduce((acc, roomId) => {
+                    const room = state.rooms.find(room => room.id === roomId)
+                      if (room) {
+                        acc.push(room)
+                      }
+                      return acc
+                    }
+                  , [] as Array<Room>)
+                || []
+          }
+        : null
+    }
   },
   modules: {
   }

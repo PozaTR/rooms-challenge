@@ -29,11 +29,13 @@ const router = useRouter()
 
 let isRequesting = false
 
-async function changeFloor(floorId: number): void {
+async function changeFloor(floorId: number) {
+  activeFloorId.value = floorId
  if (!isRequesting) {
    try {
      isRequesting = true
      await store.dispatch(actionNames.FETCH_FLOOR_INFO, floorId)
+     await router.push(`/floor/${floorId}`)
    } catch (error) {
      console.log(error)
    } finally {
