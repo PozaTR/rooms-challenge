@@ -15,7 +15,7 @@
 
       </div>
       <div class="room__button">
-        <button type="button" class="button">Modificar</button>
+        <button type="button" class="button" @click="changeRoom">Modificar</button>
       </div>
     </form>
 
@@ -23,7 +23,8 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, computed } from 'vue'
+import { defineProps, computed, defineEmits, watchEffect, ref } from 'vue'
+import Room from "@/types/Room";
 
 const props = defineProps({
   room: {
@@ -33,13 +34,25 @@ const props = defineProps({
   }
 })
 
-const capacity = computed({
-  get: () => props.room.capacity
+const capacity = ref(0)
+const occupancy = ref(0)
+
+const emit = defineEmits<{
+  (e: 'updateRoom', payload: Room): void
+}>()
+
+watchEffect(() => {
+  capacity.value = props.room.capacity
+  occupancy.value = props.room.occupancy * 100
 })
 
-const occupancy = computed({
-  get: () => props.room.occupancy * 100
-})
+function changeRoom() {
+  emit('updateRoom', {
+    ...props.room,
+    capacity: capacity.value,
+    occupancy: occupancy.value / 100,
+  })
+}
 
 </script>
 

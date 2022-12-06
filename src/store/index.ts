@@ -2,8 +2,8 @@ import { createStore } from "vuex"
 import floorService from "@/api/floorService"
 import State from "@/types/State"
 import Floor from "@/types/Floor"
-import Room from "@/types/Room";
-import FloorUI from "@/types/FloorUI";
+import Room from "@/types/Room"
+import FloorUI from "@/types/FloorUI"
 
 export const actionNames = {
   FETCH_FLOORS: 'fetch_floor',
@@ -51,6 +51,10 @@ export default createStore<State>({
       rooms.forEach(room => {
         commit(mutationNames.ADD_ROOM_INTO_FLOOR, { floorId: floor.id, room })
       })
+    },
+    [actionNames.PATCH_ROOM]: async ({ commit }, newRoom: Room) => {
+      await floorService.updateRoom(newRoom)
+      commit(mutationNames.UPDATE_ROOM, newRoom)
     }
   },
   mutations: {
@@ -71,6 +75,10 @@ export default createStore<State>({
         state.floors[activeFloorIdx].rooms = [payload.room.id]
         state.rooms.push(payload.room)
       }
+    },
+    [mutationNames.UPDATE_ROOM]: (state: State, newRoom: Room): void => {
+      const roomIdx = state.rooms.findIndex(room => room.id === newRoom.id)
+      state.rooms[roomIdx] = newRoom
     }
   },
   getters: {

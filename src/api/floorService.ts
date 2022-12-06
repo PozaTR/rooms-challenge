@@ -1,6 +1,7 @@
 import axios from "axios";
 import Floor from "@/types/Floor"
 import FloorUI from "@/types/FloorUI"
+import Room from "@/types/Room"
 
 const BASE_URL = 'https://apimocha.com/rooms-challenge/'
 
@@ -14,7 +15,16 @@ const getFloorInfo = async (floorId: number): Promise<FloorUI> => {
     return data
 }
 
+const updateRoom = async (newRoom: Room) => {
+    const payload = {
+        capacity: newRoom.capacity,
+        occupancy: newRoom.occupancy
+    }
+    await axios.patch(`${BASE_URL}rooms/${newRoom.id}`, payload)
+}
+
 export default {
     getFloors,
-    getFloorInfo
+    getFloorInfo,
+    updateRoom
 }
