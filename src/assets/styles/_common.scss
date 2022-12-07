@@ -8,16 +8,15 @@
 
 .button-primary {
   background-color: $color-primary;
+
+  &--disabled {
+    background-color: rgba($color-primary, .6);
+    cursor: not-allowed;
+  }
 }
 
 .button-secondary {
   background-color: $color-danger;
-}
-
-.button--disabled {
-  background-color: $color-secondary;
-  color: $color-primary;
-  cursor: not-allowed;
 }
 
 @keyframes spin {
