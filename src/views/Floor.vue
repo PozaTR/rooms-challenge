@@ -11,7 +11,7 @@
       :class="[
         'button',
         'button-primary',
-        {'button--disabled': isEditing}
+        {'button-primary--disabled': isEditing}
       ]"
       @click="addNewRoom">
       Añadir sala
@@ -54,7 +54,9 @@ import { actionNames, getterNames } from "@/store"
 const store = useStore()
 const router = useRouter()
 
-let isEditing = ref(false)
+const isEditing = ref(false)
+const isCreating = ref(false)
+
 const newRoom = {
   name: '',
   capacity: 0,

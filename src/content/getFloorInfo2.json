@@ -1,0 +1,40 @@
+{
+  "id": 2,
+  "name": "Planta 2",
+  "rooms": [
+    {
+      "id": 5,
+      "name": "Sala 2-1",
+      "capacity": 10,
+      "occupancy": 0.9
+    },
+    {
+      "id": 6,
+      "name": "Sala 2-2",
+      "capacity": 30,
+      "occupancy": 0.2},
+    {
+      "id": 7,
+      "name": "Sala 2-3",
+      "capacity": 40,
+      "occupancy": 0.5},
+    {
+      "id": 8,
+      "name": "Sala 2-4",
+      "capacity": 20,
+      "occupancy": 0.3
+    },
+    {
+      "id": 9,
+      "name": "Sala 2-5",
+      "capacity": 50,
+      "occupancy": 0.65
+    },
+    {
+      "id": 10,
+      "name": "Sala 2-6",
+      "capacity": 4,
+      "occupancy": 0.5
+    }
+  ]
+}

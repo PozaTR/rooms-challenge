@@ -52,7 +52,12 @@
             v-if="props.isEditing">
           <button
               type="button"
-              class="button button-primary room__button"
+              :class="[
+                'button',
+                'button-primary',
+                'room__button',
+                {'button-primary--disabled': isCreating }
+              ]"
               @click="addNewRoom">Añadir
           </button>
           <button
@@ -63,7 +68,12 @@
         </template>
         <button
             v-else
-            class="button button-primary room__button"
+            :class="[
+                'button',
+                'button-primary',
+                 'room__button',
+                 {'button-primary--disabled': isModifying}
+            ]"
             type="button"
             @click="changeRoom">Modificar
         </button>
@@ -74,25 +84,31 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits, watchEffect, ref } from 'vue'
-import Room from "@/types/Room";
+import { defineProps, defineEmits, watchEffect, ref, PropType } from "vue"
+import Room from "@/types/Room"
 
 const props = defineProps({
   room: {
-    type: Room,
+    type: Object as PropType<Room>,
     default: () => ({}),
     required: true
   },
   isEditing: {
     type: Boolean,
     default: false
+  },
+  isModifyng: {
+    type: Boolean,
+    default: false
   }
 })
-
 
 const name = ref('')
 const capacity = ref(0)
 const occupancy = ref(0)
+
+const isModifying = ref(false)
+const isCreating = ref(false)
 
 const emit = defineEmits<{
   (e: 'updateRoom', payload: Room): void,
@@ -103,23 +119,32 @@ const emit = defineEmits<{
 watchEffect(() => {
   name.value = props.room.name
   capacity.value = props.room.capacity
-  occupancy.value = props.room.occupancy * 100
+  occupancy.value = parseInt(((props.room.occupancy || 0) * 100).toFixed(0))
+  isModifying.value = false
 })
 
 function changeRoom():void {
-  emit('updateRoom', {
-    ...props.room,
-    capacity: capacity.value,
-    occupancy: occupancy.value / 100,
-  })
+  if (!isModifying.value) {
+    isModifying.value = true
+    emit('updateRoom', {
+      ...props.room,
+      capacity: capacity.value,
+      occupancy: occupancy.value / 100,
+    })
+  }
+
 }
 
 function addNewRoom():void {
-  emit('addNewRoom', {
-    name: name.value,
-    capacity: capacity.value,
-    occupancy: occupancy.value / 100
-  })
+  if (!isCreating.value) {
+    console.log('occupancy.value / 100', occupancy.value / 100, occupancy.value)
+    isCreating.value = true
+    emit('addNewRoom', {
+      name: name.value,
+      capacity: capacity.value,
+      occupancy: occupancy.value / 100
+    })
+  }
 }
 
 function cancelEdition(): void {
