@@ -7,6 +7,7 @@
       {{floorInfo.name}}
     </h2>
     <button
+      v-if="floorInfo && floorInfo.rooms && floorInfo.rooms.length"
       :class="[
         'button',
         'button-primary',
@@ -37,6 +38,9 @@
       ></Room>
     </li>
   </ol>
+  <div v-else class="spinner__container">
+    <div class="spinner"></div>
+  </div>
 </div>
 </template>
 

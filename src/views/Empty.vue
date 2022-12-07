@@ -1,5 +1,7 @@
 <template>
-<div class="empty">empty</div>
+  <div class="spinner__container">
+    <div class="spinner"> </div>
+  </div>
 </template>
 
 <script setup lang="ts"></script>
