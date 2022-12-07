@@ -5,7 +5,9 @@ install NodeJs. Preferably lts/erbium (v12)
 ```
 git clone git@github.com:PozaTR/rooms-challenge.git
 npm install
+npm run serve
 ```
+Open http://localhost:8081/
 
 ## Decissions taken
 - I decided to store two different entities: floor and room. First of them groups the other and just have an id to point them out. Doing that we can handle changes in room entities without updating floor info, and vice versa.
