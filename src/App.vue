@@ -34,14 +34,14 @@ async function changeFloor(floorId: number) {
  if (!isRequesting.value) {
    try {
      isRequesting.value = true
-     await store.dispatch(actionNames.FETCH_FLOOR_INFO, floorId)
-
      await router.push({
        name: 'FloorView',
        params: {
          id: floorId
        }
      })
+
+     await store.dispatch(actionNames.FETCH_FLOOR_INFO, floorId)
    } catch (error) {
      console.log(error)
    } finally {
